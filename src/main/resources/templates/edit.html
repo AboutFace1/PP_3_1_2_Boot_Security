@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" type="text/css" href="layout.css"/>
+  <meta charset="UTF-8">
+  <script>
+    function onlyOne(checkbox) {
+      var checkboxes = document.getElementsByName('check')
+      checkboxes.forEach((item) => {
+        if (item !== checkbox) item.checked = false
+      })
+    }
+  </script>
+  <style>
+    html {
+      font-size: 20px;
+    }
+    input[type="text"]
+    {
+      font-size: 20px;
+    }
+  </style>
+  <title>Update user</title>
+
+</head>
+<body>
+
+<form th:method="PATCH" th:action="@{/people/{id}(id=${user.getId()})}" th:object="${user}">
+
+  <label for="name">Enter name: </label>
+  <input type="text" th:field="*{name}" id="name"/> <!-- instead Can use name="" for non-th attribute and requestparam in controller -->
+  <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+  <br/>
+
+  <label for="age">Enter age: </label>
+  <input type="text" th:field="*{age}" id="age"/>
+  <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</div>
+  <br/>
+
+  <label for="email">Enter email: </label>
+  <input type="text" th:field="*{email}" id="email"/>
+  <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+  <br/>
+
+<!--  Can't edit own roles-->
+  <span th:if="${#authentication.getPrincipal().getUsername() != user.getEmail()}">
+    <label for="idUser">USER</label>
+    <input type="checkbox" name="check" value="USER" id="idUser" onclick="onlyOne(this)">
+
+    <label for="idAdmin">ADMIN</label>
+    <input type="checkbox" name="check" value="ADMIN" id="idAdmin" onclick="onlyOne(this)">
+    <br>
+  </span>
+
+  <input type="submit" value="Update!"/>
+</form>
+
+<div th:replace="logout.html :: logout"> </div>
+
+</body>
+</html>

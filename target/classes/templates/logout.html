@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .logoutButton {
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="logoutButton" th:fragment="logout">
+  <form method="POST" action="/auth/logout">
+    <button type="submit">Log out</button>
+  </form>
+</div>
+
+  </body>
+  </html>
