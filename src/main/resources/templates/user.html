@@ -1,59 +1,136 @@
 <!DOCTYPE html>
-<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <title>Spring Security User Page</title>
+    <meta charset="UTF-8">
+    <title>Index</title>
+
+    <!-- jQuery Modal -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+            integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+            crossorigin="anonymous"></script>
+
+    <script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+    <!-- 5.1.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
     <style>
+        .card-block{
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+            margin-bottom: 20px;
+        }
         html {
-            font-size: 20px;
+            font-size: 120%;
         }
     </style>
 </head>
+
 <body>
 
-<h2>Welcome, <span th:text="${user.name}">name</span>! </h2>
+<div class="container-fluid">
+    <div class="row" style="height: 70px; display: flex; justify-content: center; align-items: center; background: #504f54">
+        <div class="col-md-11">
+            <h5><span style="font-weight: bold; color: ghostwhite" th:text="${#authentication.getPrincipal().getUsername()}"></span> <span style="color: ghostwhite"> with roles: </span> <span style="color: ghostwhite" th:text="${user.getRole()}"></span></h5>
+        </div>
+        <div class="col-md-1">
+            <div th:replace="logout.html :: logout"></div>
+        </div>
+    </div>
 
-<div sec:authorize="isAuthenticated()">
+    <div class="row">
+        <br>
+    </div>
 
-    <span sec:authorize="hasAuthority('developers:write')" >
-        Actions:
+    <div class="row">
+        <div class="col-md-2">
+            <ul id="userAdminTabs" class="nav nav-pills flex-column" data-tabs="tabs">
+                <span sec:authorize="hasAuthority('developers:write')">
+                    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
+                </span>
 
-        <ul  style="list-style-type: decimal">
-            <li><a class="nav-link" href="">Set roles to users(this action is in
-                development)</a></li>
-            <li><a href="/people">Check all users</a></li>
-        </ul>
-        <hr>
-    </span>
+                <li class="nav-item"><a class="nav-link active" href="#userTab" data-bs-toggle="tab">User</a></li>
+            </ul>
 
-    Your credentials:
-    <table>
-        <thead>
-        <tr>
-            <th> id</th>
-            <th> name</th>
-            <th> age</th>
-            <th> status</th>
-            <th> role</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td><span th:text="${user.id}"> id </span></td>
-            <td><span th:text="${user.name}"> name </span></td>
-            <td><span th:text="${user.age}"> age </span></td>
-            <td><span th:text="${user.status}"> status </span></td>
-            <td><span th:text="${user.role}"> role </span></td>
-        </tr>
-        </tbody>
+        </div>
 
-    </table>
+        <div class="col-md-10" style="padding-right: 50px">
+            <div class="tab-content" id="userAdminTabsContent">
+                <!-- ADMIN TAB -->
+<!--                <div class="tab-pane active" id="adminTab">-->
 
-    <hr>
 
-    You are authenticated as <span sec:authentication="name"></span>
-    <div th:replace="logout.html :: logout"></div>
+<!--                </div>-->
+                <!-- USER TAB -->
+                <div class="tab-pane active" id="userTab">
+
+                    <span class="fs-1" style="font-weight: 600">User profile</span>
+                    <div class="fs-7 fw-bold" style="padding-left: 20px; padding-top: 15px; padding-bottom: 15px; background: ghostwhite; border: 1px solid lightblue">User's information:</div>
+
+                    <div class="card">
+                        <div class="card-block"> <hr style="margin-top: 20px; margin-bottom: 0"/>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Age</th>
+                                    <th>Role</th>
+                                    <th>Email</th>
+                                </tr>
+                                <tbody style="border-top: none">
+                                <tr>
+                                    <td th:text="${user.getId()}">id</td>
+                                    <td th:text="${user.getName()}">name</td>
+                                    <td th:text="${user.getAge()}">age</td>
+                                    <td th:text="${user.getRole()}">role</td>
+                                    <td th:text="${user.getEmail()}">Email</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
 </div>
 
+
+<script>
+    popUpWithData();
+
+    function onlyOne(checkbox) {
+        var checkboxes = document.getElementsByName('role')
+        checkboxes.forEach((item) => {
+            if (item !== checkbox) item.checked = false
+        })
+    }
+
+    $(".nav li a").on("click", function() {
+        $(".nav li a").removeClass("active");
+        $(this).addClass("active");
+    });
+
+    $(document).on('ready', function() {
+        $('#tabs').tab();
+    });
+
+    function showHidePassword() {
+        var x = document.getElementById("inputPassword");
+        if (x.type === "password") {
+            x.type = "text";
+        } else {
+            x.type = "password";
+        }
+    }
+
+</script>
 
 </body>
 </html>

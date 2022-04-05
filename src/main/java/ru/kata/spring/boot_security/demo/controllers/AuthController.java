@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.security.Principal;
 
 @Controller
-@RequestMapping("/auth")
+@RequestMapping("/")
 public class AuthController {
 
     @RequestMapping(value = {"/login", ""})
@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/logout")
     public String getLoginPageAfterLogout() {
-        return "logout";
+        return "login";
     }
 
 }
