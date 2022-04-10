@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Index</title>
@@ -11,7 +11,8 @@
             integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
             crossorigin="anonymous"></script>
 
-    <script type="text/javascript" th:src="@{js/main.js}" src="../static/js/main.js"></script>
+    <script type="text/javascript" src="js/append-logout.js"></script>
+
     <!-- 5.1.3 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -34,10 +35,13 @@
 <div class="container-fluid">
     <div class="row" style="height: 70px; display: flex; justify-content: center; align-items: center; background: #504f54">
         <div class="col-md-11">
-            <h5><span style="font-weight: bold; color: ghostwhite" th:text="${#authentication.getPrincipal().getUsername()}"></span> <span style="color: ghostwhite"> with roles: </span> <span style="color: ghostwhite" th:text="${user.getRole()}"></span></h5>
+            <h5><span class="spanAuthUserName" style="font-weight: bold; color: ghostwhite"></span>
+                <span style="color: ghostwhite"> with roles: </span> <span class="spanAuthUserRole" style="color: ghostwhite"></span></h5>
         </div>
         <div class="col-md-1">
-            <div th:replace="logout.html :: logout"></div>
+            <div class="logoutButton">
+
+            </div>
         </div>
     </div>
 
@@ -48,10 +52,8 @@
     <div class="row">
         <div class="col-md-2">
             <ul id="userAdminTabs" class="nav nav-pills flex-column" data-tabs="tabs">
-                <span sec:authorize="hasAuthority('developers:write')">
-                    <li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>
-                </span>
 
+                <!-- first li added with prepend -->
                 <li class="nav-item"><a class="nav-link active" href="#userTab" data-bs-toggle="tab">User</a></li>
             </ul>
 
@@ -82,52 +84,42 @@
                                     <th>Email</th>
                                 </tr>
                                 <tbody style="border-top: none">
-                                <tr>
-                                    <td th:text="${user.getId()}">id</td>
-                                    <td th:text="${user.getName()}">name</td>
-                                    <td th:text="${user.getAge()}">age</td>
-                                    <td th:text="${user.getRole()}">role</td>
-                                    <td th:text="${user.getEmail()}">Email</td>
-                                </tr>
+
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
 
 
 <script>
-    popUpWithData();
 
-    function onlyOne(checkbox) {
-        var checkboxes = document.getElementsByName('role')
-        checkboxes.forEach((item) => {
-            if (item !== checkbox) item.checked = false
-        })
-    }
+    getAuthUserData();
 
-    $(".nav li a").on("click", function() {
-        $(".nav li a").removeClass("active");
-        $(this).addClass("active");
-    });
+    function getAuthUserData() {
+        fetch('http://localhost:8080/api/users/authenticated-user')
+            .then(resp => resp.json())
+            .then(user => {
+                $('.spanAuthUserName').text(`${user.email}`);
+                $('.spanAuthUserRole').text(`${user.role}`);
+                let tableRow = `<tr>
+                             <td>${user.id}</td>
+                             <td>${user.name}</td>
+                             <td>${user.age}</td>
+                             <td>${user.role}</td>
+                             <td>${user.email}</td>
+                            </tr>`
 
-    $(document).on('ready', function() {
-        $('#tabs').tab();
-    });
+                $('.table-striped tbody').append(tableRow);
 
-    function showHidePassword() {
-        var x = document.getElementById("inputPassword");
-        if (x.type === "password") {
-            x.type = "text";
-        } else {
-            x.type = "password";
-        }
+                if (user.role === 'ADMIN') {
+                    $('#userAdminTabs').prepend('<li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>');
+                }
+            })
     }
 
 </script>
