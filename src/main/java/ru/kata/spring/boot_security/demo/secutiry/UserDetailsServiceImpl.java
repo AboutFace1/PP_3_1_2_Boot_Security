@@ -1,8 +1,7 @@
 package ru.kata.spring.boot_security.demo.secutiry;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,7 +10,6 @@ import ru.kata.spring.boot_security.demo.model.Status;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 
-import java.util.List;
 
 @Service(value = "userDetailsServiceImpl")
 public class UserDetailsServiceImpl implements UserDetailsService {
