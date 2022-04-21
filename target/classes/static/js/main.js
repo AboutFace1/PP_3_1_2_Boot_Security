@@ -20,7 +20,7 @@ async function getAuthUserData() {
         .then(resp => resp.json())
         .then(user => {
                 $('.spanAuthUserName').text(`${user.email}`);
-                $('.spanAuthUserRole').text(`${user.role}`);
+                $('.spanAuthUserRole').text(`${user.roles[0].name === 'ADMIN' ? 'ADMIN' : 'USER'}`);
         })
 }
 
@@ -32,12 +32,13 @@ async function getUsersTable() {
          .then(resp => resp.json())
          .then(users => {
              users.forEach(user => {
+                 console.log(`${user.roles.map(x=>`${x.name}`)}`);
                  let tableRow = `$(
                     <tr>
                      <td>${user.id}</td>
                      <td>${user.name}</td>
                      <td>${user.age}</td>
-                     <td>${user.role}  </td>
+                     <td>${user.roles[0].name === 'ADMIN' ? 'ADMIN' : 'USER'}</td>
                      <td>${user.email}</td>
             
                      <td>
@@ -142,7 +143,7 @@ async function getUsersTable() {
          $('.modal-body').append(bodyForm);
 
         // Mark current role
-         if (user.role === 'ADMIN') {
+         if (user.roles[0].name === 'ADMIN') {
             document.querySelector('#input-ADMIN').setAttribute('checked', 'checked')
              document.querySelector('#input-USER').removeAttribute('checked')
          } else {
@@ -159,14 +160,16 @@ async function getUsersTable() {
          let email = modal.find('#input-email').val().trim();
          let age = modal.find('#input-age').val().trim();
          let role = $('.form-check-input:checked').val();
-         console.log(role)
+         let roleId = role === 'ADMIN' ? 10 : 20;
+         console.log('Role is:'+role)
+         console.log('RoleId is:'+roleId)
 
          let data = {
              id: id,
              name: name,
              email: email,
              age: age,
-             role: role
+             roles: [{id:roleId}, {name:role}]
          }
 
          const response = await userFetchService.updateUser(data, id);
@@ -197,6 +200,7 @@ async function getUsersTable() {
          let name = $('#newName').val();
          let age = $('#newAge').val();
          let role = $('.form-check-input:checked').val();
+         let roleId = role === 'ADMIN' ? 10 : 20;
 
          let email = $('#newEmail').val();
          let password = $('#newPassword').val();
@@ -205,7 +209,7 @@ async function getUsersTable() {
              age: age,
              email: email,
              password: password,
-             role: role
+             roles: [{id:roleId}, {name:role}]
          }
          const response = await userFetchService.addNewUser(data);
          if (response.ok) {

@@ -1,11 +1,16 @@
 package ru.kata.spring.boot_security.demo.model;
 
 import org.hibernate.validator.constraints.Range;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -26,17 +31,24 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "role")
-    private Role role;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinTable(name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-    @Enumerated(value = EnumType.STRING)
-    @Column(name = "status")
-    private Status status;
+    public void addRole(Role role) {
+        roles.add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
+        role.getUsers().remove(this);
+    }
 
     public User() {
-        this.role = Role.USER;
-        this.status = Status.ACTIVE;
+
     }
 
     public User(int id, String name, Byte age, String email, String password) {
@@ -47,14 +59,13 @@ public class User {
         this.password = password;
     }
 
-    public User(int id, String name, Byte age, String email, String password, Role role, Status status) {
+    public User(int id, String name, Byte age, String email, String password, Set<Role> role) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.email = email;
         this.password = password;
-        this.role = role;
-        this.status = status;
+        this.roles = role;
     }
 
     public int getId() {
@@ -97,19 +108,36 @@ public class User {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
-    public Status getStatus() {
-        return status;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(name, user.name) && Objects.equals(age, user.age) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(roles, user.roles);
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, age, email, password, roles);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 }

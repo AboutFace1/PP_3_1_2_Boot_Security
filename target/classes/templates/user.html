@@ -104,18 +104,18 @@
             .then(resp => resp.json())
             .then(user => {
                 $('.spanAuthUserName').text(`${user.email}`);
-                $('.spanAuthUserRole').text(`${user.role}`);
+                $('.spanAuthUserRole').text(`${user.roles[0].name === 'ADMIN' ? 'ADMIN' : 'USER'}`);
                 let tableRow = `<tr>
                              <td>${user.id}</td>
                              <td>${user.name}</td>
                              <td>${user.age}</td>
-                             <td>${user.role}</td>
+                             <td>${user.roles[0].name === 'ADMIN' ? 'ADMIN' : 'USER'}</td>
                              <td>${user.email}</td>
                             </tr>`
 
                 $('.table-striped tbody').append(tableRow);
 
-                if (user.role === 'ADMIN') {
+                if (user.roles[0].name === 'ADMIN') {
                     $('#userAdminTabs').prepend('<li class="nav-item"><a class="nav-link" href="/admin">Admin</a></li>');
                 }
             })
