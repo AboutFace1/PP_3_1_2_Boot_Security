@@ -2,5 +2,5 @@
 Rest controllers + fetch api
 
 Roles in db (role table)
-id:10, name:ADMIN
+id:10, name:ADMIN; 
 id:20, name:USER
