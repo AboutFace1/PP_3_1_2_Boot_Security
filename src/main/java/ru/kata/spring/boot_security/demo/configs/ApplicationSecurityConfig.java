@@ -36,8 +36,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/admin/**", "/admin").hasAuthority("ADMIN")
-                .antMatchers("/user").hasAuthority("USER")
-                .antMatchers("/user").hasAuthority("ADMIN") // Fix in patchmapping and postmapping in RestUsersController
+                .antMatchers("/user").hasAnyAuthority("USER", "ADMIN") // Fix in patchmapping and postmapping in RestUsersController
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
