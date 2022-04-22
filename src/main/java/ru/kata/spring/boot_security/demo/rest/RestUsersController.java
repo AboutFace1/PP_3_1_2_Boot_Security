@@ -14,10 +14,7 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,7 +22,7 @@ import java.util.stream.Collectors;
 public class RestUsersController {
 
     UserService userService;
-    RoleService roleService;
+    RoleService roleService; // Not needed
 
     @Autowired
     public RestUsersController(UserService userService, RoleService roleService) {
@@ -55,6 +52,7 @@ public class RestUsersController {
 
     @PostMapping("")
     public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+
         if (!bindingResult.hasErrors()) {
             userService.save(user);
             return new ResponseEntity<>(null, HttpStatus.OK);
@@ -72,6 +70,11 @@ public class RestUsersController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateUser(@RequestBody User user, @PathVariable int id) {
+
+        User updatedUser = userService.getUserById(id);
+
+        updatedUser.setRoles(user.getRoles());
+
         userService.update(id, user);
 
         return new ResponseEntity<>(null, HttpStatus.OK);

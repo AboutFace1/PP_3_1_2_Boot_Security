@@ -32,7 +32,7 @@ async function getUsersTable() {
          .then(resp => resp.json())
          .then(users => {
              users.forEach(user => {
-                 console.log(`${user.roles.map(x=>`${x.name}`)}`);
+                 // console.log(`${user.roles.map(x=>`${x.name}`)}`); MAP through all roles of user
                  let tableRow = `$(
                     <tr>
                      <td>${user.id}</td>
@@ -160,6 +160,7 @@ async function getUsersTable() {
          let email = modal.find('#input-email').val().trim();
          let age = modal.find('#input-age').val().trim();
          let role = $('.form-check-input:checked').val();
+         console.log('ROLESSSSSSSSSS: + ' + role);
          let roleId = role === 'ADMIN' ? 10 : 20;
          console.log('Role is:'+role)
          console.log('RoleId is:'+roleId)
@@ -169,7 +170,7 @@ async function getUsersTable() {
              name: name,
              email: email,
              age: age,
-             roles: [{id:roleId}, {name:role}]
+             roles: [{id:roleId, name:role}]
          }
 
          const response = await userFetchService.updateUser(data, id);
@@ -201,6 +202,7 @@ async function getUsersTable() {
          let age = $('#newAge').val();
          let role = $('.form-check-input:checked').val();
          let roleId = role === 'ADMIN' ? 10 : 20;
+         console.log('ROLE ID IS : ' + roleId);
 
          let email = $('#newEmail').val();
          let password = $('#newPassword').val();
@@ -209,7 +211,7 @@ async function getUsersTable() {
              age: age,
              email: email,
              password: password,
-             roles: [{id:roleId}, {name:role}]
+             roles: [{id:roleId,name:role}] // Passing the array of roles
          }
          const response = await userFetchService.addNewUser(data);
          if (response.ok) {

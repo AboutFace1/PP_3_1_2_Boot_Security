@@ -16,8 +16,8 @@ import java.util.Set;
 public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Modifying
-    @Query("update User u set u.name = ?1, u.age = ?2, u.email = ?3, u.roles =?4 WHERE u.id = ?5")
-    void updateUser(String name, Byte age, String email, Set<Role> role, Integer id);
+    @Query("update User u set u.name = ?1, u.age = ?2, u.email = ?3 WHERE u.id = ?4")
+    void updateUser(String name, Byte age, String email, Integer id);
 
     @Transactional(readOnly = true)
     Optional<User> findByEmail(String email);
